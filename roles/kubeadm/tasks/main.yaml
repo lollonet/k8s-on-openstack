@@ -34,11 +34,11 @@
     state: installed
     update_cache: yes
   with_items:
-    - docker-engine=1.12.6-0~ubuntu-xenial
+    - docker-engine=17.05.0~ce-0~ubuntu-xenial
     - "kubelet={{ kubernetes_ubuntu_version }}"
     - "kubeadm={{ kubernetes_ubuntu_version }}"
     - "kubectl={{ kubernetes_ubuntu_version }}"
-    - "kubernetes-cni=0.6.0-00"
+    - "kubernetes-cni=0.7.5-00"
 
 - name: Hold docker and kubernetes packages
   command: "apt-mark hold {{ item }}"

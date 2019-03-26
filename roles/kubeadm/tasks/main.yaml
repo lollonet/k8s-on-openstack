@@ -5,8 +5,7 @@
 
 - name: Install Docker APT repo GPG key
   apt_key:
-    id: F76221572C52609D
-    keyserver: keyserver.ubuntu.com
+    url: https://download.docker.com/linux/ubuntu/gpg
     state: present
 
 - name: Setup k8s APT repo
@@ -16,13 +15,13 @@
 
 - name: Setup Docker APT repo
   apt_repository:
-    repo: deb http://apt.dockerproject.org/repo ubuntu-xenial main
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu ubuntu-xenial stable
     state: present
 
 - name: Unhold docker and kubernetes packages
   command: "apt-mark unhold {{ item }}"
   with_items:
-    - docker-engine
+    - docker-ce
     - kubelet
     - kubeadm
     - kubectl
@@ -34,11 +33,14 @@
     state: installed
     update_cache: yes
   with_items:
-    - docker-engine=17.05.0~ce-0~ubuntu-xenial
+    - docker-ce
     - "kubelet={{ kubernetes_ubuntu_version }}"
     - "kubeadm={{ kubernetes_ubuntu_version }}"
     - "kubectl={{ kubernetes_ubuntu_version }}"
     - "kubernetes-cni=0.7.5-00"
+    - apt-transport-https ca-certificates
+    - curl
+    - software-properties-common
 
 - name: Hold docker and kubernetes packages
   command: "apt-mark hold {{ item }}"
@@ -49,11 +51,16 @@
     - kubectl
     - kubernetes-cni
 
-- name: configure docker to use journald
+- name: configure docker to use systemd
   copy:
     content: |
       {
-        "log-driver": "journald"
+        "exec-opts": ["native.cgroupdriver=systemd"],
+        "log-driver": "json-file",
+        "log-opts": {
+        "max-size": "100m"
+        },
+        "storage-driver": "overlay2"
       }
     dest: /etc/docker/daemon.json
     owner: root

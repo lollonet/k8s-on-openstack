@@ -21,11 +21,17 @@
 - name: Unhold docker and kubernetes packages
   command: "apt-mark unhold {{ item }}"
   with_items:
+    - docker-engine
     - docker-ce
     - kubelet
     - kubeadm
     - kubectl
     - kubernetes-cni
+
+- name: Remove docker-engine
+  apt:
+    name: docker-engine
+    state: absent
 
 - name: Install docker and kubernetes packages
   apt:
@@ -34,11 +40,14 @@
     update_cache: yes
   with_items:
     - docker-ce
+    - docker-ce-cli
+    - containerd.io
     - "kubelet={{ kubernetes_ubuntu_version }}"
     - "kubeadm={{ kubernetes_ubuntu_version }}"
     - "kubectl={{ kubernetes_ubuntu_version }}"
     - "kubernetes-cni=0.7.5-00"
-    - apt-transport-https ca-certificates
+    - apt-transport-https
+    - ca-certificates
     - curl
     - software-properties-common
 

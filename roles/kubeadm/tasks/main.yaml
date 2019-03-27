@@ -23,6 +23,8 @@
   with_items:
     - docker-engine
     - docker-ce
+    - docker-ce-cli
+    - containerd.io
     - kubelet
     - kubeadm
     - kubectl
@@ -36,7 +38,7 @@
 - name: Install docker and kubernetes packages
   apt:
     name: "{{item}}"
-    state: installed
+    state: present
     update_cache: yes
   with_items:
     - docker-ce
@@ -55,6 +57,9 @@
   command: "apt-mark hold {{ item }}"
   with_items:
     - docker-engine
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
     - kubelet
     - kubeadm
     - kubectl

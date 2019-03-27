@@ -4,7 +4,7 @@
   register: kubelet_conf
 
 - name: kubeadm init
-  command: "kubeadm init --kubernetes-version {{ kubernetes_version }} --apiserver-advertise-address {{ hostvars[groups.master[0]].ansible_ssh_host }}"
+  command: "kubeadm init"
   args:
     creates: /etc/kubernetes/kubelet.conf
   when: kubelet_conf.stat.exists == False
